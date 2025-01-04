@@ -3,10 +3,10 @@
     public class Department
     {
         public int DepartmentId { get; set; }
-        public string DepartmentName { get; set; }
+        public required string DepartmentName { get; set; }
         public int? ManagerId { get; set; }
 
-        public Employee Manager { get; set; }
+        public required Employee Manager { get; set; }
     }
 
 }

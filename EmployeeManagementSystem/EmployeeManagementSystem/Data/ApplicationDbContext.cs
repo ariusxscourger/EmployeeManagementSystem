@@ -17,6 +17,7 @@ namespace EmployeeManagementSystem.Data
         {
             base.OnModelCreating(builder);
 
+
             builder.Entity<Employee>()
                 .HasOne(e => e.Manager)
                 .WithMany()
@@ -31,6 +32,9 @@ namespace EmployeeManagementSystem.Data
                 .HasOne(e => e.Department)
                 .WithMany()
                 .HasForeignKey(e => e.DepartmentId);
+
+            builder.Entity<EmployeeAudit>()
+                .HasKey(a => a.AuditId); 
         }
     }
 
