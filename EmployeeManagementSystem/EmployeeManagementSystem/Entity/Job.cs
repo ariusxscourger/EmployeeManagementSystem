@@ -1,4 +1,6 @@
-﻿namespace EmployeeManagementSystem.Entity
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace EmployeeManagementSystem.Entity
 {
     public class Job
     {

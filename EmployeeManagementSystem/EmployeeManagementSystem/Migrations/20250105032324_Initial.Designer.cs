@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeManagementSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250104120644_Initial")]
+    [Migration("20250105032324_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -102,15 +102,12 @@ namespace EmployeeManagementSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ManagerEmployeeId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ManagerId")
                         .HasColumnType("int");
 
                     b.HasKey("DepartmentId");
 
-                    b.HasIndex("ManagerEmployeeId");
+                    b.HasIndex("ManagerId");
 
                     b.ToTable("Departments");
                 });
@@ -356,9 +353,8 @@ namespace EmployeeManagementSystem.Migrations
                 {
                     b.HasOne("EmployeeManagementSystem.Entity.Employee", "Manager")
                         .WithMany()
-                        .HasForeignKey("ManagerEmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Manager");
                 });

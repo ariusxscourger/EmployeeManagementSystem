@@ -195,8 +195,7 @@ namespace EmployeeManagementSystem.Migrations
                     DepartmentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DepartmentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ManagerId = table.Column<int>(type: "int", nullable: true),
-                    ManagerEmployeeId = table.Column<int>(type: "int", nullable: false)
+                    ManagerId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -281,9 +280,9 @@ namespace EmployeeManagementSystem.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Departments_ManagerEmployeeId",
+                name: "IX_Departments_ManagerId",
                 table: "Departments",
-                column: "ManagerEmployeeId");
+                column: "ManagerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_DepartmentId",
@@ -301,19 +300,18 @@ namespace EmployeeManagementSystem.Migrations
                 column: "ManagerId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Departments_Employees_ManagerEmployeeId",
+                name: "FK_Departments_Employees_ManagerId",
                 table: "Departments",
-                column: "ManagerEmployeeId",
+                column: "ManagerId",
                 principalTable: "Employees",
-                principalColumn: "EmployeeId",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "EmployeeId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Departments_Employees_ManagerEmployeeId",
+                name: "FK_Departments_Employees_ManagerId",
                 table: "Departments");
 
             migrationBuilder.DropTable(
