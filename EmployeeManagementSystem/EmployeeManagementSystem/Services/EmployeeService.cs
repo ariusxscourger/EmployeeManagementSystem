@@ -23,6 +23,11 @@ public class EmployeeService
             .Include(e => e.Department)
             .FirstOrDefaultAsync(e => e.EmployeeId == id);
     public async Task<List<Job>> GetJobsAsync() => await _context.Jobs.ToListAsync();
+
+    public async Task<List<Employee>> GetManagersAsync() => await _context.Employees
+        .Where(e => e.Job.JobTitle == "Manager")
+        .ToListAsync();
+
     public async Task<List<Department>> GetDepartmentsAsync() => await _context.Departments.ToListAsync();
 
     //CREATE
