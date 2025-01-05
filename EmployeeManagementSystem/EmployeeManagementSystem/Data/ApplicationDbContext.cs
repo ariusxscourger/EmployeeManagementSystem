@@ -1,6 +1,7 @@
 ﻿using EmployeeManagementSystem.Entity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace EmployeeManagementSystem.Data
 { 
@@ -17,6 +18,24 @@ namespace EmployeeManagementSystem.Data
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<Department>()
+               .HasOne(d => d.Manager) // Assuming this navigation property
+               .WithMany()
+               .HasForeignKey(d => d.ManagerId)
+               .OnDelete(DeleteBehavior.NoAction); // Prevent cascade delete
+
+            builder.Entity<Employee>()
+            .Property(e => e.Salary)
+            .HasColumnType("decimal(18,2)");
+
+            builder.Entity<Job>()
+            .Property(e => e.MaxSalary)
+            .HasColumnType("decimal(18,2)");
+
+            builder.Entity<Job>()
+            .Property(e => e.MinSalary)
+            .HasColumnType("decimal(18,2)");
+
             builder.Entity<Employee>()
                 .HasOne(e => e.Manager)
                 .WithMany()
@@ -31,6 +50,9 @@ namespace EmployeeManagementSystem.Data
                 .HasOne(e => e.Department)
                 .WithMany()
                 .HasForeignKey(e => e.DepartmentId);
+
+            builder.Entity<EmployeeAudit>()
+                .HasKey(a => a.AuditId); 
         }
     }
 

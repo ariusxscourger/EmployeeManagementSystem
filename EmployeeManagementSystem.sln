@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeManagementSystem", "EmployeeManagementSystem\EmployeeManagementSystem\EmployeeManagementSystem.csproj", "{E0A94568-5CA0-4161-98ED-DD4D986A32D5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeManagementSystem.Client", "EmployeeManagementSystem\EmployeeManagementSystem.Client\EmployeeManagementSystem.Client.csproj", "{55B4E14C-EF27-455E-9C60-8E5650A6B1E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeManagementSystem.Test", "EmployeeManagementSystem.Test\EmployeeManagementSystem.Test.csproj", "{185DB4B1-4E06-4071-B36F-8DE5644FC115}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{55B4E14C-EF27-455E-9C60-8E5650A6B1E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55B4E14C-EF27-455E-9C60-8E5650A6B1E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55B4E14C-EF27-455E-9C60-8E5650A6B1E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{185DB4B1-4E06-4071-B36F-8DE5644FC115}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{185DB4B1-4E06-4071-B36F-8DE5644FC115}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{185DB4B1-4E06-4071-B36F-8DE5644FC115}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{185DB4B1-4E06-4071-B36F-8DE5644FC115}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

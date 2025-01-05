@@ -1,56 +1,40 @@
-using EmployeeManagementSystem.Client.Pages;
-using EmployeeManagementSystem.Components;
 using EmployeeManagementSystem.Data;
 using EmployeeManagementSystem.Entity;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity; // Add this using directive
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore; // Add this using directive
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
-
-// Add DbContext with SQL Server
+// 1. Configure Database Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add Identity for user authentication and authorization
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+// 2. Configure Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 8;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
 })
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
-// Add authentication
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/login";
-        options.LogoutPath = "/logout";
-        options.AccessDeniedPath = "/accessdenied";
-    });
+// 3. Add Blazor Server Services
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
 
-// Add Antiforgery services
-builder.Services.AddAntiforgery(options =>
-{
-    options.HeaderName = "X-CSRF-TOKEN";
-});
-
-// Add application-specific services
+// 4. Register Custom Services
 builder.Services.AddScoped<EmployeeService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Middleware Configuration
 if (app.Environment.IsDevelopment())
 {
-    app.UseWebAssemblyDebugging();
+    app.UseDeveloperExceptionPage();
 }
 else
 {
@@ -60,17 +44,15 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
+
+// Authentication and Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseAntiforgery();
-
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode()
-    .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(EmployeeManagementSystem.Client._Imports).Assembly);
-
-app.MapFallbackToFile("index.html");
+app.MapControllers(); // Add this if you are using API controllers
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
 
 app.Run();
