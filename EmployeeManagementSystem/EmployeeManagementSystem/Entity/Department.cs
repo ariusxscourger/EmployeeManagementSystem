@@ -8,7 +8,6 @@
         public required Employee? Manager { get; set; }
         public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>(); // Reverse navigation
 
-
     }
 
 }

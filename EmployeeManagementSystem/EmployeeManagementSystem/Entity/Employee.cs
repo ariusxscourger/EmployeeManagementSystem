@@ -26,6 +26,5 @@ namespace EmployeeManagementSystem.Entity
             public Job? Job { get; set; } // Optional, loaded when needed
             public Department? Department { get; set; } // Optional, loaded when needed
             public Employee? Manager { get; set; } // Optional, prevents circular reference issues
-        
     }
 }
