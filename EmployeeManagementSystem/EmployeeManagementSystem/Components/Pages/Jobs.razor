@@ -1,0 +1,56 @@
+﻿@page "/jobs"
+@using EmployeeManagementSystem.Entity
+@inject EmployeeService EmployeeService
+@inject NavigationManager NavigationManager
+
+<h3>Jobs</h3>
+<button @onclick="AddJob">Add New Job</button>
+
+@if (jobs == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Job Title</th>
+                <th>Min Salary</th>
+                <th>Max Salary</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var job in jobs)
+            {
+                <tr>
+                    <td>@job.JobTitle</td>
+                    <td>@job.MinSalary</td>
+                    <td>@job.MaxSalary</td>
+                    <td>
+                        <button @onclick="() => EditJob(job.JobId)">Edit</button>
+                        <button @onclick="() => DeleteJob(job.JobId)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Job> jobs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        jobs = await EmployeeService.GetJobsAsync();
+    }
+
+    private void AddJob() => NavigationManager.NavigateTo("/add-job");
+    private void EditJob(int id) => NavigationManager.NavigateTo($"/edit-job/{id}");
+    private async Task DeleteJob(int id)
+    {
+        await EmployeeService.DeleteJobAsync(id);
+        jobs = await EmployeeService.GetJobsAsync(); // Refresh the list
+    }
+}

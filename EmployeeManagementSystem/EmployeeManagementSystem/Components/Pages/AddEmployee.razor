@@ -1,0 +1,75 @@
+﻿@page "/add-employee"
+@using EmployeeManagementSystem.Entity
+@inject EmployeeService EmployeeService
+@inject NavigationManager NavigationManager
+
+<h3>Add Employee</h3>
+
+<EditForm Model="employee" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText @bind-Value="employee.FirstName" placeholder="First Name" />
+    <InputText @bind-Value="employee.LastName" placeholder="Last Name" />
+    <InputText @bind-Value="employee.Email" placeholder="Email" />
+    <InputText @bind-Value="employee.PhoneNumber" placeholder="Phone Number" />
+    <InputDate @bind-Value="employee.HireDate" />
+    <InputNumber @bind-Value="employee.Salary" />
+
+    <label>Job</label>
+    <InputSelect @bind-Value="employee.JobId">
+        <option value="">-- Select Job --</option>
+        @foreach (var job in jobs)
+        {
+            <option value="@job.JobId">@job.JobTitle</option>
+        }
+    </InputSelect>
+
+    <label>Department</label>
+    <InputSelect @bind-Value="employee.DepartmentId">
+        <option value="">-- Select Department --</option>
+        @foreach (var department in departments)
+        {
+            <option value="@department.DepartmentId">@department.DepartmentName</option>
+        }
+    </InputSelect>
+
+    <label>Manager</label>
+    <InputSelect @bind-Value="employee.ManagerId">
+        <option value="">-- Select Manager --</option>
+        @foreach (var manager in managers)
+        {
+            <option value="@manager.EmployeeId">@manager.FirstName @manager.LastName</option>
+        }
+    </InputSelect>
+
+    <button type="submit">Save</button>
+</EditForm>
+
+@code {
+    private Employee employee = new()
+    {
+        FirstName = string.Empty,
+        LastName = string.Empty,
+        Email = string.Empty,
+        PhoneNumber = string.Empty
+    };
+    private List<Job> jobs = new();
+    private List<Department> departments = new();
+    private List<Employee> managers = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        jobs = await EmployeeService.GetJobsAsync();
+        departments = await EmployeeService.GetDepartmentsAsync();
+        managers = (await EmployeeService.GetEmployeesAsync())
+            .Where(e => e.ManagerId == null) // Managers without managers
+            .ToList();
+    }
+
+    private async Task HandleSubmit()
+    {
+        await EmployeeService.AddEmployeeAsync(employee);
+        NavigationManager.NavigateTo("/employees");
+    }
+}

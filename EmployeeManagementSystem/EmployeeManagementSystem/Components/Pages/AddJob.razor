@@ -1,0 +1,27 @@
+﻿@page "/add-job"
+@using EmployeeManagementSystem.Entity
+@inject EmployeeService EmployeeService
+@inject NavigationManager NavigationManager
+
+<h3>Add Job</h3>
+
+<EditForm Model="job" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText @bind-Value="job.JobTitle" placeholder="Job Title" />
+    <InputNumber @bind-Value="job.MinSalary" placeholder="Min Salary" />
+    <InputNumber @bind-Value="job.MaxSalary" placeholder="Max Salary" />
+
+    <button type="submit">Save</button>
+</EditForm>
+
+@code {
+    private Job job = new() { JobTitle = string.Empty };
+
+    private async Task HandleSubmit()
+    {
+        await EmployeeService.AddJobAsync(job);
+        NavigationManager.NavigateTo("/jobs");
+    }
+}

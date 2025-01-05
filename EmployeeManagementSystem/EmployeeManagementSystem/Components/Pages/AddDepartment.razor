@@ -1,0 +1,46 @@
+﻿@page "/add-department"
+@using EmployeeManagementSystem.Entity
+@inject EmployeeService EmployeeService
+@inject NavigationManager NavigationManager
+
+<h3>Add Department</h3>
+
+<EditForm Model="department" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText @bind-Value="department.DepartmentName" placeholder="Department Name" />
+
+    <label>Manager</label>
+    <InputSelect @bind-Value="department.ManagerId">
+        <option value="">-- Select Manager --</option>
+        @foreach (var manager in managers)
+        {
+            <option value="@manager.EmployeeId">@manager.FirstName @manager.LastName</option>
+        }
+    </InputSelect>
+
+    <button type="submit">Save</button>
+</EditForm>
+
+@code {
+    private Department department = new()
+    {
+        DepartmentName = string.Empty,
+        Manager = null
+    };
+    private List<Employee> managers = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        managers = (await EmployeeService.GetEmployeesAsync())
+            .Where(e => e.ManagerId == null) // Managers without managers
+            .ToList();
+    }
+
+    private async Task HandleSubmit()
+    {
+        await EmployeeService.AddDepartmentAsync(department);
+        NavigationManager.NavigateTo("/departments");
+    }
+}

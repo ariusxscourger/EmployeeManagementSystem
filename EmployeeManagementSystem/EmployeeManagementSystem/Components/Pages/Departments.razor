@@ -1,0 +1,54 @@
+﻿@page "/departments"
+@using EmployeeManagementSystem.Entity
+@inject EmployeeService EmployeeService
+@inject NavigationManager NavigationManager
+
+<h3>Departments</h3>
+<button @onclick="AddDepartment">Add New Department</button>
+
+@if (departments == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Department Name</th>
+                <th>Manager</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var department in departments)
+            {
+                <tr>
+                    <td>@department.DepartmentName</td>
+                    <td>@(department.Manager == null ? "None" : department.Manager.FirstName + " " + department.Manager.LastName)</td>
+                    <td>
+                        <button @onclick="() => EditDepartment(department.DepartmentId)">Edit</button>
+                        <button @onclick="() => DeleteDepartment(department.DepartmentId)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Department> departments;
+
+    protected override async Task OnInitializedAsync()
+    {
+        departments = await EmployeeService.GetDepartmentsAsync();
+    }
+
+    private void AddDepartment() => NavigationManager.NavigateTo("/add-department");
+    private void EditDepartment(int id) => NavigationManager.NavigateTo($"/edit-department/{id}");
+    private async Task DeleteDepartment(int id)
+    {
+        await EmployeeService.DeleteDepartmentAsync(id);
+        departments = await EmployeeService.GetDepartmentsAsync(); // Refresh the list
+    }
+}

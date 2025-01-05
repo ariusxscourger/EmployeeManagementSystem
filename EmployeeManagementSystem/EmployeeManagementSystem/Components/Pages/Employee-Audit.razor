@@ -1,0 +1,43 @@
+﻿@page "/employee-audit"
+@using EmployeeManagementSystem.Entity
+@inject EmployeeService EmployeeService
+
+<h3>Employee Audit</h3>
+
+@if (audits == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Action</th>
+                <th>Changed Data</th>
+                <th>Changed By</th>
+                <th>Changed At</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var audit in audits)
+            {
+                <tr>
+                    <td>@audit.ActionType</td>
+                    <td>@audit.ChangedData</td>
+                    <td>@audit.ChangedBy</td>
+                    <td>@audit.ChangedAt</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<EmployeeAudit> audits;
+
+    protected override async Task OnInitializedAsync()
+    {
+        audits = await EmployeeService.GetAuditsAsync();
+    }
+}
