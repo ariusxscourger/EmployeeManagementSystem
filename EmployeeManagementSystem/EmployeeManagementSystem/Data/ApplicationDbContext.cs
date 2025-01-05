@@ -42,14 +42,14 @@ namespace EmployeeManagementSystem.Data
                 .HasForeignKey(e => e.ManagerId);
 
             builder.Entity<Employee>()
-                .HasOne(e => e.Job)
-                .WithMany()
-                .HasForeignKey(e => e.JobId);
+                .HasOne(e => e.Job)// Navigation property
+                .WithMany(j => j.Employees)  // Reverse navigation property
+                .HasForeignKey(e => e.JobId);// Foreign key in Employees table
 
             builder.Entity<Employee>()
-                .HasOne(e => e.Department)
-                .WithMany()
-                .HasForeignKey(e => e.DepartmentId);
+               .HasOne(e => e.Department)      // Navigation property
+               .WithMany(d => d.Employees)     // Reverse navigation property
+               .HasForeignKey(e => e.DepartmentId); // Foreign key in Employees table
 
             builder.Entity<EmployeeAudit>()
                 .HasKey(a => a.AuditId); 
