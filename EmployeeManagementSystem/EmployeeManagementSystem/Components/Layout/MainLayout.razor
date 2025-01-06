@@ -1,12 +1,24 @@
 ﻿@inherits LayoutComponentBase
 
 <div class="page">
-    <div class="sidebar">
+    <!-- Sidebar -->
+    <aside class="sidebar d-none d-md-block">
         <NavMenu />
+    </aside>
+
+    <!-- Main Content -->
+    <div class="d-flex flex-column flex-grow-1">
+        <!-- Top Row -->
+        @* <div class="top-row">
+            <a href="/" class="navbar-brand">Employee Management System</a>
+            <button class="btn btn-link">Sign In</button>
+        </div> *@
+
+        <!-- Main Section -->
+        <main>
+            <article class="content py-4">
+                @Body
+            </article>
+        </main>
     </div>
-    <main>
-        <article>
-            @Body
-        </article>
-    </main>
 </div>

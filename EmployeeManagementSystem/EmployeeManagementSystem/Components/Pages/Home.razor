@@ -1,3 +1,60 @@
-﻿@page "/Home"
+﻿@page "/"
 
-<h3>Welcome to the Employee Management System</h3>
+<PageTitle>Home</PageTitle>
+
+<div class="home-page text-center">
+    <!-- Hero Section -->
+    <section class="hero bg-light py-5">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Welcome to the Employee Management System</h1>
+            <p class="lead text-muted">
+                Streamline your organization's operations with ease. Manage employees, jobs, and departments efficiently.
+            </p>
+            <a href="/employees" class="btn btn-primary btn-lg mt-3">Get Started</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features py-5 bg-white">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card p-4 shadow-sm rounded">
+                        <h2><i class="bi bi-people"></i></h2>
+                        <h5 class="fw-bold mt-3">Employee Management</h5>
+                        <p class="text-muted">
+                            Add, edit, and manage employee records with ease. Stay organized and productive.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card p-4 shadow-sm rounded">
+                        <h2><i class="bi bi-briefcase"></i></h2>
+                        <h5 class="fw-bold mt-3">Job Tracking</h5>
+                        <p class="text-muted">
+                            Track job roles and assignments to ensure your team is optimized for success.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card p-4 shadow-sm rounded">
+                        <h2><i class="bi bi-building"></i></h2>
+                        <h5 class="fw-bold mt-3">Department Oversight</h5>
+                        <p class="text-muted">
+                            Keep all departments aligned and collaborate across teams effortlessly.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="call-to-action bg-dark text-white py-5">
+        <div class="container text-center">
+            <h2 class="fw-bold">Ready to get started?</h2>
+            <p class="lead">Transform the way you manage your workforce today.</p>
+            <a href="/departments" class="btn btn-outline-light btn-lg">Explore Departments</a>
+        </div>
+    </section>
+</div>

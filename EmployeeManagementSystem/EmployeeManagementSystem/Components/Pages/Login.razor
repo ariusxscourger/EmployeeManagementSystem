@@ -1,0 +1,108 @@
+﻿@page "/login"
+@using Blazored.LocalStorage
+@using System.ComponentModel.DataAnnotations
+@using EmployeeManagementSystem.Entity
+@inject UserLoginService UserLoginService
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
+@rendermode InteractiveServer
+
+<div class="signup-page">
+    <h3 class="text-primary mb-4">Log In</h3>
+
+    <EditForm Model="userModel" OnValidSubmit="HandleSubmit" class="card p-4 shadow-sm" FormName="Name">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger mb-3" />
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <InputText id="email" class="form-control" @bind-Value="userModel.Email" />
+            <ValidationMessage For="@(() => userModel.Email)" />
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <InputText id="password" class="form-control" @bind-Value="userModel.Password" type="password" />
+            <ValidationMessage For="@(() => userModel.Password)" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Log In</button>
+        <button type="button" class="btn btn-secondary mt-2" @onclick="LogModelState">Log Model State</button>
+    </EditForm>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger mt-3">@errorMessage</div>
+    }
+</div>
+
+@code {
+    private LogInModel userModel = new();
+    private string? errorMessage;
+
+    /// <summary>
+    /// Debugging method to log the current state of the form model.
+    /// </summary>
+    private void LogModelState()
+    {
+        System.Diagnostics.Debug.WriteLine($"Email: {userModel.Email}");
+        System.Diagnostics.Debug.WriteLine($"Password: {userModel.Password}");
+    }
+
+    /// <summary>
+    /// Handles form submission for login.
+    /// </summary>
+    private async Task HandleSubmit()
+    {
+        Console.WriteLine("Form submitted!");
+
+        // Clear previous error message
+        errorMessage = string.Empty;
+
+        // Validate the model manually
+        var validationResults = new List<ValidationResult>();
+        var validationContext = new ValidationContext(userModel);
+
+        if (!Validator.TryValidateObject(userModel, validationContext, validationResults, true))
+        {
+            foreach (var error in validationResults)
+            {
+                Console.WriteLine($"Validation Error: {error.ErrorMessage}");
+            }
+            return;
+        }
+
+        // Attempt to validate the user's credentials via the UserLoginService
+        var isValid = await UserLoginService.ValidateLoginAsync(userModel.Email, UserLoginService.HashPassword(userModel.Password));
+
+        if (isValid)
+        {
+            Console.WriteLine("User logged in successfully");
+
+            // Simulate storing an authentication token in local storage
+            await LocalStorage.SetItemAsync("authToken", "user-authentication-token");
+
+            // Navigate to the home page after successful login
+            NavigationManager.NavigateTo("/", forceLoad: true);
+        }
+        else
+        {
+            // Display an error message if the login fails
+            errorMessage = "Invalid Email or Password. Please try again.";
+        }
+    }
+
+    /// <summary>
+    /// Represents the data model for the login form.
+    /// </summary>
+    public class LogInModel
+    {
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email address.")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Password is required.")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters.")]
+        public string Password { get; set; } = string.Empty;
+    }
+}

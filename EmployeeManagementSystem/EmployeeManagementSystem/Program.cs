@@ -1,58 +1,63 @@
 using EmployeeManagementSystem.Data;
 using EmployeeManagementSystem.Entity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity; // Add this using directive
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore; // Add this using directive
+using Microsoft.AspNetCore.Identity;
+using EmployeeManagementSystem.Components;
+using Blazored.LocalStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configure Database Context
+// Register DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Register Blazored LocalStorage
+builder.Services.AddBlazoredLocalStorage();
+// Register Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// 2. Configure Identity
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-{
-    options.Password.RequireDigit = true;
-    options.Password.RequiredLength = 8;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireLowercase = true;
-})
-.AddEntityFrameworkStores<ApplicationDbContext>()
-.AddDefaultTokenProviders();
-
-// 3. Add Blazor Server Services
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
-
-// 4. Register Custom Services
+// Register Services
 builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<UserLoginService>();
+
+// Add Razor Components
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents()
+    .AddInteractiveWebAssemblyComponents();
+
+// Register Antiforgery
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-CSRF-TOKEN"; // Optional: Custom header for token
+});
 
 var app = builder.Build();
 
-// Middleware Configuration
+// Middleware Pipeline
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
+    app.UseWebAssemblyDebugging();
 }
 else
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
-// Authentication and Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers(); // Add this if you are using API controllers
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+// Add Antiforgery Middleware AFTER Authentication and Authorization
+app.UseAntiforgery();
+
+// Map endpoints
+app.MapStaticAssets();
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode()
+    .AddInteractiveWebAssemblyRenderMode();
 
 app.Run();

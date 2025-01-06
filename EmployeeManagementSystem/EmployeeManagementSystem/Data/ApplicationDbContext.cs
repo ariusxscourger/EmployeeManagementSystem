@@ -5,10 +5,11 @@ using System.Reflection.Emit;
 
 namespace EmployeeManagementSystem.Data
 { 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
+        public new DbSet<UserLogin> UserLogins { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Job> Jobs { get; set; }
         public DbSet<Department> Departments { get; set; }
@@ -52,7 +53,10 @@ namespace EmployeeManagementSystem.Data
                .HasForeignKey(e => e.DepartmentId); // Foreign key in Employees table
 
             builder.Entity<EmployeeAudit>()
-                .HasKey(a => a.AuditId); 
+                .HasKey(a => a.AuditId);
+
+            builder.Entity<UserLogin>()
+                .HasKey(l => l.UserId);
         }
     }
 
