@@ -25,6 +25,7 @@ public class EmployeeService
             .Include(e => e.Job)
             .Include(e => e.Department)
             .FirstOrDefaultAsync(e => e.EmployeeId == id);
+
     }
     public async Task<List<Job>> GetJobsAsync()
     {
@@ -50,6 +51,7 @@ public class EmployeeService
         return await _context.Departments
             .FirstOrDefaultAsync(d => d.DepartmentId == id);
     }
+
 
     // CREATE
     public async Task AddEmployeeAsync(Employee employee)
