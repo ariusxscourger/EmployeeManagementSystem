@@ -1,0 +1,99 @@
+﻿@page "/signup"  
+@using System.ComponentModel.DataAnnotations  
+@inject UserLoginService UserLoginService  
+@inject NavigationManager NavigationManager
+@using EmployeeManagementSystem.Entity  
+@rendermode InteractiveServer  
+
+<div class="signup-page container my-4">
+    <h3 class="text-primary fw-bold mb-4">Sign Up</h3>
+
+    <EditForm Model="userModel" OnValidSubmit="HandleSubmit" class="card p-4 shadow-sm" FormName="Sign-Up">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger mb-3" />
+
+        <div class="mb-3">
+            <label for="firstName" class="form-label">First Name</label>
+            <InputText id="firstName" class="form-control" @bind-Value="userModel.FirstName" />
+            <ValidationMessage For="@(() => userModel.FirstName)" />
+        </div>
+
+        <div class="mb-3">
+            <label for="lastName" class="form-label">Last Name</label>
+            <InputText id="lastName" class="form-control" @bind-Value="userModel.LastName" />
+            <ValidationMessage For="@(() => userModel.LastName)" />
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <InputText id="email" class="form-control" @bind-Value="userModel.Email" />
+            <ValidationMessage For="@(() => userModel.Email)" />
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <InputText id="password" class="form-control" @bind-Value="userModel.Password" type="password" />
+            <ValidationMessage For="@(() => userModel.Password)" />
+        </div>
+
+        <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Confirm Password</label>
+            <InputText id="confirmPassword" class="form-control" @bind-Value="userModel.ConfirmPassword" type="password" />
+            <ValidationMessage For="@(() => userModel.ConfirmPassword)" />
+        </div>
+
+        <button type="submit" class="btn btn-primary shadow w-100">Sign Up</button>
+    </EditForm>
+</div>
+@code {  
+   private SignUpModel userModel = new();  
+
+    private async Task HandleSubmit()
+    {
+        Console.WriteLine("Form submitted!");
+
+        // Create the user login entity
+        var userLogin = new UserLogin
+            {
+                FirstName = userModel.FirstName,
+                LastName = userModel.LastName,
+                Email = userModel.Email,
+                PasswordHash = UserLoginService.HashPassword(userModel.Password)
+            };
+
+        // Add the user to the database
+        await UserLoginService.AddLoginAsync(userLogin);
+
+        Console.WriteLine($"User signed up successfully: {userModel.FirstName} {userModel.LastName}");
+
+        // Redirect to login page after successful registration
+        NavigationManager.NavigateTo("/login");
+    }
+
+
+
+
+    public class SignUpModel
+    {
+        [Required(ErrorMessage = "First name is required.")]
+        [StringLength(50, ErrorMessage = "First name must be less than 50 characters.")]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Last name is required.")]
+        [StringLength(50, ErrorMessage = "Last name must be less than 50 characters.")]
+        public string LastName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email address.")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Password is required.")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
+            ErrorMessage = "Password must include at least one uppercase letter, one lowercase letter, one number, and one special character, and must be at least 8 characters long.")]
+        public string Password { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Password confirmation is required.")]
+        [Compare(nameof(Password), ErrorMessage = "Passwords do not match.")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+}
