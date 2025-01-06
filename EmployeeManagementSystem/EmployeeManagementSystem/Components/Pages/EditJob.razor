@@ -1,0 +1,86 @@
+﻿@page "/edit-job/{id:int}"
+@using EmployeeManagementSystem.Entity
+@inject EmployeeService EmployeeService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<div class="edit-job-page container my-4">
+    <!-- Header -->
+    <h3 class="text-primary fw-bold mb-4">Edit Job</h3>
+
+    @if (job == null)
+    {
+        <div class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Loading job details...</p>
+        </div>
+    }
+    else
+    {
+        <EditForm Model="job" OnValidSubmit="HandleSubmit" class="card p-4 shadow-sm" FormName="EditJob">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger mb-3" />
+
+            <!-- Job Title -->
+            <div class="mb-3">
+                <label for="jobTitle" class="form-label">Job Title</label>
+                <InputText id="jobTitle" class="form-control" @bind-Value="job.JobTitle" placeholder="Enter Job Title" />
+            </div>
+
+            <!-- Min Salary -->
+            <div class="mb-3">
+                <label for="minSalary" class="form-label">Min Salary</label>
+                <InputNumber id="minSalary" class="form-control" @bind-Value="job.MinSalary" placeholder="Enter Minimum Salary" />
+            </div>
+
+            <!-- Max Salary -->
+            <div class="mb-4">
+                <label for="maxSalary" class="form-label">Max Salary</label>
+                <InputNumber id="maxSalary" class="form-control" @bind-Value="job.MaxSalary" placeholder="Enter Maximum Salary" />
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary shadow">
+                    <i class="bi bi-save"></i> Save
+                </button>
+                <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </button>
+            </div>
+        </EditForm>
+    }
+</div>
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    private Job? job;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Fetch the job details by id
+        job = await EmployeeService.GetJobByIdAsync(id);
+
+        if (job == null)
+        {
+            NavigationManager.NavigateTo("/jobs");
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (job != null)
+        {
+            await EmployeeService.UpdateJobAsync(job);
+            NavigationManager.NavigateTo("/jobs");
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/jobs");
+    }
+}

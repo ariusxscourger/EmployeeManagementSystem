@@ -1,0 +1,93 @@
+﻿@page "/edit-department/{id:int}"
+@using EmployeeManagementSystem.Entity
+@inject EmployeeService EmployeeService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<div class="edit-department-page container my-4">
+    <!-- Header -->
+    <h3 class="text-primary fw-bold mb-4">Edit Department</h3>
+
+    @if (department == null)
+    {
+        <div class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Loading department details...</p>
+        </div>
+    }
+    else
+    {
+        <EditForm Model="department" OnValidSubmit="HandleSubmit" class="card p-4 shadow-sm" FormName="Edit-Department">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger mb-3" />
+
+            <!-- Department Name -->
+            <div class="mb-3">
+                <label for="departmentName" class="form-label">Department Name</label>
+                <InputText id="departmentName" class="form-control" @bind-Value="department.DepartmentName" placeholder="Enter Department Name" />
+            </div>
+
+            <!-- Manager -->
+            <div class="mb-4">
+                <label for="manager" class="form-label">Manager</label>
+                <InputSelect id="manager" class="form-select" @bind-Value="department.ManagerId">
+                    <option value="">-- Select Manager --</option>
+                    @foreach (var manager in managers)
+                    {
+                        <option value="@manager.EmployeeId">@manager.FirstName @manager.LastName</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary shadow">
+                    <i class="bi bi-save"></i> Save
+                </button>
+                <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </button>
+            </div>
+        </EditForm>
+    }
+</div>
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    private Department? department;
+    private List<Employee> managers = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Fetch the department details by id
+        department = await EmployeeService.GetDepartmentByIdAsync(id);
+
+        if (department == null)
+        {
+            NavigationManager.NavigateTo("/departments");
+            return;
+        }
+
+        // Load the list of potential managers
+        managers = (await EmployeeService.GetEmployeesAsync())
+            .Where(e => e.ManagerId == null) // Managers without managers
+            .ToList();
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (department != null)
+        {
+            await EmployeeService.UpdateDepartmentAsync(department);
+            NavigationManager.NavigateTo("/departments");
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/departments");
+    }
+}
